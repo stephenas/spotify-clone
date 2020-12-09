@@ -1,11 +1,12 @@
 import { React } from "react";
 import "./App.css";
+import Login from "./Login";
 
 function App() {
   return (
     //BEM naming concept
     <div className="app">
-      <h2>Here we go...</h2>
+      <Login />
     </div>
   );
 }
