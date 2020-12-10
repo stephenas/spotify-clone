@@ -1,10 +1,11 @@
 import React from "react";
 import "./Player.css";
+import Sidebar from "./Sidebar";
 
-function Player() {
+function Player({ spotify }) {
   return (
     <div className="player">
-      <h2>Welcome to Spotify</h2>
+      <Sidebar />
     </div>
   );
 }
