@@ -9,28 +9,63 @@ import { useDataLayerValue } from "./DataLayer";
 const spotify = new SpotifyWebApi();
 
 function App() {
-  const [{ user }, dispatch] = useDataLayerValue();
+  const [{ token }, dispatch] = useDataLayerValue();
 
   useEffect(() => {
+    // Set token
     const hash = getTokenFromUrl();
     window.location.hash = "";
-    const _token = hash.access_token;
+    let _token = hash.access_token;
 
     if (_token) {
       spotify.setAccessToken(_token);
+
+      dispatch({
+        type: "SET_TOKEN",
+        token: _token,
+      });
+
+      spotify.getPlaylist("91d0sfr8u658ohvnd08niezrl").then((response) =>
+        dispatch({
+          type: "SET_DISCOVER_WEEKLY",
+          discover_weekly: response,
+        })
+      );
+
+      spotify.getMyTopArtists().then((response) =>
+        dispatch({
+          type: "SET_TOP_ARTISTS",
+          top_artists: response,
+        })
+      );
+
+      dispatch({
+        type: "SET_SPOTIFY",
+        spotify: spotify,
+      });
+
       spotify.getMe().then((user) => {
         dispatch({
           type: "SET_USER",
-          user: user,
+          user,
+        });
+      });
+
+      spotify.getUserPlaylists().then((playlists) => {
+        dispatch({
+          type: "SET_PLAYLISTS",
+          playlists,
         });
       });
     }
-  }, []);
-  console.log(" user is - ", user);
+  }, [token, dispatch]);
+  console.log(" token is - ", token);
 
   return (
     //BEM naming concept
-    <div className="app">{!user ? <Login /> : <Player />}</div>
+    <div className="app">
+      {!token ? <Login /> : <Player spotify={spotify} />}
+    </div>
   );
 }
 
